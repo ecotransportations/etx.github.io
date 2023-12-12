@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculateur d'empreinte carbone</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: rgb(255, 255, 255);
+      margin: 0;
+    }
+    header {
+      background-color: #228B22;
+      padding: 20px;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      max-width: 600px;
+      padding: 20px;
+      background-color: white;
+      margin: 40px auto;
+      border-radius: 10px;
+    }
+    img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+    h1, h3 {
+      color: #228B22;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #228B22;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 0;
+      width: 100%;
+      border: none;
+    }
+    button:hover {
+      background-color: #186A18;
+    }
+    .back-link {
+      display: block;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .back-link a {
+      color: #228B22;
+      text-decoration: none;
+    }
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+    .result-box {
+      border: 2px solid green;
+      background-color: white;
+      padding: 20px;
+      margin: 20px;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+    } 
+    .refresh-button {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #228B22;
+      color: white;
+      text-decoration: none;
+      border-radius: 0px;
+      cursor: pointer;
+    }
+    .refresh-button:hover {
+      background-color: #186A18;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://raw.githubusercontent.com/ecoemission/ecoemission.github.io/main/Ekran%20Resmi%202023-02-16%2017.41.56%20kopyası.png" alt="image">
+  </header>
+  <div class="container">
+    <h1>Calculateur d'empreinte carbone</h1>
+    <div class="container">
+      <h1>Calculateur d'empreinte carbone - Transports</h1>
+      <form>
+        <label for="carType">Type de votre voiture :</label>
+        <select id="carType">
+          <option value="hybride">Hybride</option>
+          <option value="electrique">Électrique</option>
+          <option value="essence">Essence</option>
+          <option value="diesel">Diesel</option>
+        </select><br>
+  
+        <label for="carMiles">Distance parcourue en voiture (km par an) :</label>
+        <input type="number" id="carMiles"><br>
+  
+        <label for="publicTransportUsage">Fréquence d'utilisation des transports en commun (jours par semaine) :</label>
+        <input type="number" id="publicTransportUsage"><br>
+  
+        <button type="button" onclick="calculateTransportFootprint()">Calcule</button>
+      </form>
+      <div class="result-box">
+        <h2>Votre empreinte carbone liée aux transports: <span id="result"></span></h2>
+      </div>
+    </div>
+    <script>
+      function calculateTransportFootprint() {
+        const carType = document.getElementById("carType").value;
+        const carMiles = document.getElementById("carMiles").value;
+        const publicTransportUsage = document.getElementById("publicTransportUsage").value;
+  
+        // Coefficients for CO2 emissions based on car type
+        const co2PerKm = { hybride: 0.046, electrique: 0.022, essence: 0.120, diesel: 0.130 };
+        
+        // Calculate CO2 emissions for car
+        const carEmissions = carMiles * co2PerKm[carType];
+  
+        // Assumed CO2 emission per day of public transport usage
+        const publicTransportEmissionPerDay = 0.8; // in kg
+  
+        // Calculate CO2 emissions for public transport
+        const publicTransportEmissions = publicTransportUsage * 52 * publicTransportEmissionPerDay;
+  
+        // Calculate total CO2 emissions
+        const totalEmissions = carEmissions + publicTransportEmissions;
+        document.getElementById("result").innerText = totalEmissions.toFixed(2) + " kg de CO2 par an";
+      }
+    </script>
+</body>
+</html>
+
+
+
+
+
