@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Calculateur d'empreinte carbone</title>
+  <title>Calculateur d'empreinte carbone - Transports</title>
   <style>
     * {
       box-sizing: border-box;
@@ -103,57 +103,74 @@
     <img src="Unknown-1.jpeg" alt="image">
   </header>
   <div class="container">
-    <h1>Calculateur d'empreinte carbone</h1>
-    <div class="container">
-      <h1>Calculateur d'empreinte carbone - Transports</h1>
-      <form>
-        <label for="carType">Type de votre voiture :</label>
-        <select id="carType">
-          <option value="hybride">Hybride</option>
-          <option value="electrique">Électrique</option>
-          <option value="essence">Essence</option>
-          <option value="diesel">Diesel</option>
-        </select><br>
-  
-        <label for="carMiles">Distance parcourue en voiture (km par an) :</label>
-        <input type="number" id="carMiles"><br>
-  
-        <label for="publicTransportUsage">Fréquence d'utilisation des transports en commun (jours par semaine) :</label>
-        <input type="number" id="publicTransportUsage"><br>
-  
-        <button type="button" onclick="calculateTransportFootprint()">Calcule</button>
-      </form>
-      <div class="result-box">
-        <h2>Votre empreinte carbone liée aux transports: <span id="result"></span></h2>
-      </div>
+    <h1>Calculateur d'empreinte carbone - Transports</h1>
+    <form>
+      <label for="carType">Type de votre voiture :</label>
+      <select id="carType">
+         <option value="hybride">Hybride</option>
+         <option value="electrique">Électrique</option>
+         <option value="essence">Essence</option>
+         <option value="diesel">Diesel</option>
+      </select><br>
+
+      <label for="carYear">Année de votre véhicule :</label>
+      <input type="number" id="carYear" min="1900" max="2023"><br>
+
+      <label for="carMiles">Distance parcourue en voiture (km par an) :</label>
+      <input type="number" id="carMiles"><br>
+
+      <label for="publicTransportMiles">Distance parcourue en transports en commun (km par an) :</label>
+      <input type="number" id="publicTransportMiles"><br>
+
+      <label for="bikeMiles">Distance parcourue à vélo ou à pied (km par an) :</label>
+      <input type="number" id="bikeMiles"><br>
+
+      <label for="carpool">Nombre de jours par semaine où vous pratiquez le covoiturage :</label>
+      <input type="number" id="carpool"><br>
+
+      <button type="button" onclick="calculateTransportFootprint()">Calcule</button>
+    </form>
+    <div class="result-box">
+      <h2>Votre empreinte carbone liée aux transports: <span id="result"></span></h2>
     </div>
-    <script>
-      function calculateTransportFootprint() {
-        const carType = document.getElementById("carType").value;
-        const carMiles = document.getElementById("carMiles").value;
-        const publicTransportUsage = document.getElementById("publicTransportUsage").value;
-  
-        // Coefficients for CO2 emissions based on car type
-        const co2PerKm = { hybride: 0.046, electrique: 0.022, essence: 0.120, diesel: 0.130 };
-        
-        // Calculate CO2 emissions for car
-        const carEmissions = carMiles * co2PerKm[carType];
-  
-        // Assumed CO2 emission per day of public transport usage
-        const publicTransportEmissionPerDay = 0.8; // in kg
-  
-        // Calculate CO2 emissions for public transport
-        const publicTransportEmissions = publicTransportUsage * 52 * publicTransportEmissionPerDay;
-  
-        // Calculate total CO2 emissions
-        const totalEmissions = carEmissions + publicTransportEmissions;
-        document.getElementById("result").innerText = totalEmissions.toFixed(2) + " kg de CO2 par an";
-      }
-    </script>
+  </div>
+  <script>
+    function calculateTransportFootprint() {
+      const carType = document.getElementById("carType").value;
+      const carYear = parseInt(document.getElementById("carYear").value);
+      const carMiles = parseFloat(document.getElementById("carMiles").value);
+      const publicTransportMiles = parseFloat(document.getElementById("publicTransportMiles").value);
+      const bikeMiles = parseFloat(document.getElementById("bikeMiles").value);
+      const carpoolDays = parseInt(document.getElementById("carpool").value);
+
+      // Coefficients for CO2 emissions based on car type
+      const co2PerKm = { hybride: 0.046, electrique: 0.022, essence: 0.120, diesel: 0.130 };
+      
+      // Adjust emissions based on car age
+      const ageAdjustmentFactor = carYear < 2000 ? 1.2 : carYear < 2010 ? 1.1 : 1;
+
+      // Calculate CO2 emissions for car
+      const carEmissions = carMiles * co2PerKm[carType] * ageAdjustmentFactor;
+
+      // Assume CO2 emission per km for public transport
+      const publicTransportEmissionPerKm = 0.05;
+
+      // Calculate CO2 emissions for public transport
+      const publicTransportEmissions = publicTransportMiles * publicTransportEmissionPerKm;
+
+      // Assume no significant emissions for biking and walking
+      const bikeEmissions = bikeMiles * 0;
+
+      // Reduction factor for carpooling
+      const carpoolReduction = carpoolDays > 0 ? 0.5 : 1;
+
+      // Adjust car emissions for carpooling
+      const adjustedCarEmissions = carEmissions * carpoolReduction;
+
+      // Calculate total CO2 emissions
+      const totalEmissions = adjustedCarEmissions + publicTransportEmissions + bikeEmissions;
+      document.getElementById("result").innerText = totalEmissions.toFixed(2) + " kg de CO2 par an";
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
