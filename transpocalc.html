@@ -119,11 +119,11 @@
       <label for="carMiles">Distance parcourue en voiture (km par an) :</label>
       <input type="number" id="carMiles"><br>
 
-      <label for="publicTransportMiles">Distance parcourue en transports en commun (km par an) :</label>
-      <input type="number" id="publicTransportMiles"><br>
+      <label for="publicTransportFrequency">Fréquence d'utilisation des transports en commun par semaine :</label>
+      <input type="number" id="publicTransportFrequency" min="0"><br>
 
-      <label for="bikeMiles">Distance parcourue à vélo ou à pied (km par an) :</label>
-      <input type="number" id="bikeMiles"><br>
+      <label for="bikeWalkFrequency">Nombre de jours où vous marchez ou utilisez un vélo par semaine :</label>
+      <input type="number" id="bikeWalkFrequency" min="0"><br>
 
       <label for="carpool">Nombre de jours par semaine où vous pratiquez le covoiturage :</label>
       <input type="number" id="carpool"><br>
@@ -139,8 +139,8 @@
       const carType = document.getElementById("carType").value;
       const carYear = parseInt(document.getElementById("carYear").value);
       const carMiles = parseFloat(document.getElementById("carMiles").value);
-      const publicTransportMiles = parseFloat(document.getElementById("publicTransportMiles").value);
-      const bikeMiles = parseFloat(document.getElementById("bikeMiles").value);
+      const publicTransportFrequency = parseInt(document.getElementById("publicTransportFrequency").value);
+      const bikeWalkFrequency = parseInt(document.getElementById("bikeWalkFrequency").value);
       const carpoolDays = parseInt(document.getElementById("carpool").value);
 
       // Coefficients for CO2 emissions based on car type
@@ -152,14 +152,16 @@
       // Calculate CO2 emissions for car
       const carEmissions = carMiles * co2PerKm[carType] * ageAdjustmentFactor;
 
-      // Assume CO2 emission per km for public transport
-      const publicTransportEmissionPerKm = 0.05;
+      // Estimations moyennes pour les distances parcourues
+      const averagePublicTransportDistance = 10; // km par trajet
+      const averageBikeWalkDistance = 2; // km par trajet
+      const publicTransportEmissionPerKm = 0.065;
 
-      // Calculate CO2 emissions for public transport
-      const publicTransportEmissions = publicTransportMiles * publicTransportEmissionPerKm;
+      // Calcul des émissions pour les transports en commun
+      const publicTransportEmissions = publicTransportFrequency * 52 * averagePublicTransportDistance * publicTransportEmissionPerKm;
 
-      // Assume no significant emissions for biking and walking
-      const bikeEmissions = bikeMiles * 0;
+      // Supposition d'émissions négligeables pour la marche et le vélo
+      const bikeWalkEmissions = bikeWalkFrequency * 52 * averageBikeWalkDistance * 0;
 
       // Reduction factor for carpooling
       const carpoolReduction = carpoolDays > 0 ? 0.5 : 1;
@@ -167,8 +169,8 @@
       // Adjust car emissions for carpooling
       const adjustedCarEmissions = carEmissions * carpoolReduction;
 
-      // Calculate total CO2 emissions
-      const totalEmissions = adjustedCarEmissions + publicTransportEmissions + bikeEmissions;
+      // Total des émissions
+      const totalEmissions = adjustedCarEmissions + publicTransportEmissions + bikeWalkEmissions + carpoolReduction;
       document.getElementById("result").innerText = totalEmissions.toFixed(2) + " kg de CO2 par an";
     }
   </script>
