@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculateur d'empreinte carbone - Transports</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-image: url('https://th-thumbnailer.cdn-si-edu.com/vSnitgUqCQCRSx7mkHZtHZHry4U=/1072x720/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/04/8e/048ed839-a581-48af-a0ae-fac6fec00948/gettyimages-168346757_web.jpg');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      margin: 0%;
+    }
+    .green-box {
+      background-color: #228B22;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .big-input {
+      font-size: 1.5em;
+      padding: 10px;
+    }
+    header {
+      background-color: #228B22;
+      padding: 20px;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      max-width: 600px;
+      padding: 20px;
+      background-color: white;
+      margin: 40px auto;
+      border-radius: 10px;
+    }
+    img {
+      max-width: 300px;
+      margin-bottom: 10px;
+    }
+    h1, h3 {
+      color: #228B22;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #228B22;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 0;
+      width: 100%;
+      border: none;
+    }
+    button:hover {
+      background-color: #186A18;
+    }
+    .big-label {
+     color: rgb(255, 255, 255);
+     font-size: 1.5em;
+    }
+    .result-box {
+      border: 2px solid green;
+      background-color: white;
+      padding: 20px;
+      margin: 20px;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+    } 
+  </style>
+</head>
+<body>
+  <header>
+    <img src="Unknown-1.jpeg" alt="image">
+  </header>
+  <div class="container">
+    <h1>Calculateur d'empreinte carbone - Transports</h1>
+    <form>
+      <label for="oldEmissions">Émissions de CO2 précédentes (kg par an) :</label>
+      <input type="number" id="oldEmissions"><br>
+
+      <label for="carType">Type de votre voiture :</label>
+      <select id="carType">
+         <option value="hybride">Hybride</option>
+         <option value="electrique">Électrique</option> 
+         <option value="essence">Essence</option>
+         <option value="diesel">Diesel</option>
+      </select><br>
+
+      <label for="carYear">Année de votre véhicule :</label>
+      <input type="number" id="carYear" min="1900" max="2023"><br>
+      <label for="carMiles">Distance parcourue en voiture (km par an) :</label>
+      <input type="number" id="carMiles"><br>
+    
+      <label for="publicTransportFrequency">Fréquence d'utilisation des transports en commun par semaine :</label>
+      <input type="number" id="publicTransportFrequency" min="0"><br>
+    
+      <label for="bikeWalkFrequency">Nombre de jours où vous marchez ou utilisez un vélo par semaine :</label>
+      <input type="number" id="bikeWalkFrequency" min="0"><br>
+    
+      <label for="carpool">Nombre de jours par semaine où vous pratiquez le covoiturage :</label>
+      <input type="number" id="carpool"><br>
+    
+    
+      <button type="button" onclick="calculateTransportFootprint()">Calcule</button>
+    </form>
+    <div class="result-box">
+      <h2>Votre empreinte carbone liée aux transports: <span id="result"></span></h2>
+      <h3>Différence par rapport aux émissions précédentes: <span id="difference"></span></h3>
+      <div id="suggestions"></div>
+    </div>
+    </div>
+    <script>
+      function calculateTransportFootprint() {
+  // Get input values
+  const oldEmissions = parseFloat(document.getElementById("oldEmissions").value) || 0;
+  const carType = document.getElementById("carType").value;
+  const carYear = parseInt(document.getElementById("carYear").value);
+  const carMiles = parseFloat(document.getElementById("carMiles").value);
+  const publicTransportFrequency = parseInt(document.getElementById("publicTransportFrequency").value);
+  const bikeWalkFrequency = parseInt(document.getElementById("bikeWalkFrequency").value);
+  const carpoolDays = parseInt(document.getElementById("carpool").value);
+
+  // Define constants and calculations
+  const co2PerKm = { hybride: 0.046, electrique: 0.022, essence: 0.120, diesel: 0.130 };
+  const ageAdjustmentFactor = carYear < 2000 ? 1.2 : carYear < 2010 ? 1.1 : 1;
+  const carEmissions = carMiles * co2PerKm[carType] * ageAdjustmentFactor;
+  const averagePublicTransportDistance = 10;
+  const averageBikeWalkDistance = 2;
+  const publicTransportEmissionPerKm = 0.065;
+  const publicTransportEmissions = publicTransportFrequency * 52 * averagePublicTransportDistance * publicTransportEmissionPerKm;
+  const bikeWalkEmissions = bikeWalkFrequency * 52 * averageBikeWalkDistance * 0;
+  const carpoolReduction = carpoolDays > 0 ? 0.5 : 1;
+  const adjustedCarEmissions = carEmissions * carpoolReduction;
+  const totalEmissions = adjustedCarEmissions + publicTransportEmissions + bikeWalkEmissions;
+  const emissionDifference = totalEmissions - oldEmissions;
+
+  const suggestions = generateSuggestions(carMiles, publicTransportFrequency, bikeWalkFrequency, carpoolDays);
+  document.getElementById("suggestions").innerHTML = suggestions;
+
+function generateSuggestions(carMiles, publicTransportFrequency, bikeWalkFrequency, carpoolDays) {
+  let suggestionsText = "<h3>Conseils pour réduire vos émissions:</h3><ul>";
+
+  if (carMiles > 10000) {
+    suggestionsText += "<li>Essayez de réduire la distance parcourue en voiture.</li>";
+  }
+  if (publicTransportFrequency < 3) {
+    suggestionsText += "<li>Utilisez davantage les transports en commun.</li>";
+  }
+  if (bikeWalkFrequency < 3) {
+    suggestionsText += "<li>Envisagez de marcher ou d'utiliser un vélo pour de courts trajets.</li>";
+  }
+  if (carpoolDays < 2) {
+    suggestionsText += "<li>Pratiquez le covoiturage plus fréquemment.</li>";
+  }
+  
+  suggestionsText += "</ul>";
+  return suggestionsText;
+}
+
+
+  // Update results in the DOM
+  document.getElementById("result").innerText = totalEmissions.toFixed(2) + " kg de CO2 par an";
+  document.getElementById("difference").innerText = emissionDifference.toFixed(2) + " kg de CO2 par an";
+}
+
+
+    </script>
+</body>
+</html>
+
+    
+
+
